@@ -24,3 +24,14 @@ Thumbs.db
 # Example:
 # data/
 # models/
+
+
+# Datasets
+*.csv
+
+# Logs
+*.log
+
+# ML models
+*.safetensors
+*.pkl
