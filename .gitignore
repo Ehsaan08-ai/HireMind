@@ -1,2 +1,26 @@
-.venv
+# ── Python environment ──
+venv/
 .env
+__pycache__/
+*.py[cod]
+
+# ── Logs ──
+logs/*.log
+*.log
+
+# ── IDE / Editor ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS / System ──
+.DS_Store
+Thumbs.db
+
+# ── Large data / models (optional) ──
+# If you download spaCy models or large datasets, you may want to ignore them.
+# Example:
+# data/
+# models/
