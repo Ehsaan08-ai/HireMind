@@ -2,12 +2,9 @@ import logging
 from contextlib import asynccontextmanager
 
 # pyrefly: ignore [missing-import]
-import spacy
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# pyrefly: ignore [missing-import]
-from sentence_transformers import SentenceTransformer
 
 from backend.api.routes import router
 from backend.core.config import (
@@ -27,6 +24,8 @@ logger = logging.getLogger("ats_resume_scorer")
 async def lifespan(app: FastAPI):
     logger.info("Starting ATS Resume Analyzer API...")
     logger.info(f"Loading Spacy NLP model '{SPACY_MODEL_PRIMARY}'")
+    import spacy
+
     try:
         app.state.nlp = spacy.load(SPACY_MODEL_PRIMARY)
         logger.info(f"Loaded {SPACY_MODEL_PRIMARY}")
@@ -38,6 +37,8 @@ async def lifespan(app: FastAPI):
         logger.info(f"Loaded {SPACY_MODEL_SECONDARY} (fallback)")
 
     logger.info(f"Loading Sentence Transformer: {SENTENCE_TRANSFORMER_MODEL}")
+
+    from sentence_transformers import SentenceTransformer
 
     app.state.embedder = SentenceTransformer(SENTENCE_TRANSFORMER_MODEL)
     logger.info(f"Loaded {SENTENCE_TRANSFORMER_MODEL}")

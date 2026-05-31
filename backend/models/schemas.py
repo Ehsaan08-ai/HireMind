@@ -26,7 +26,7 @@ class SkillValidationDetails(BaseModel):
     validated_pct: float = 0.0
 
 
-class IssueData(BaseModel):
+class IssueDetail(BaseModel):
     issue_title: str
     severity_level: str
     ats_impact: str
@@ -41,7 +41,7 @@ class AnalysisResponse(BaseModel):
     ATS_Score: float
     component_scores: ComponentScores
     issues_summary: List[str]
-    detailed_feedback: List[IssueData]
+    detailed_feedback: List[IssueDetail]
     jd_match_analysis: Optional[JDComparison] = None
     skill_validation_details: Optional[SkillValidationDetails] = None
 

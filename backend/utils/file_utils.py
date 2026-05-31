@@ -11,7 +11,10 @@ logger.setLevel(logging.INFO)
 
 
 file_handler = logging.FileHandler(os.path.join(LOG_DIR, "ats_scorer.log"))
-file_handler.setLevel(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(
+    logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+)
 
 console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setLevel(logging.WARNING)

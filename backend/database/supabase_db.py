@@ -2,10 +2,11 @@ import logging
 import httpx
 import json
 from datetime import datetime, timezone
-from typing import Dict, List, Optional
-from backend.core.config import SUPABASE_URL, SUPABASE_KEY
+from typing import List, Optional, Dict
 
 logger = logging.getLogger("ats_resume_scorer")
+
+from backend.core.config import SUPABASE_URL, SUPABASE_KEY
 
 
 def _get_headers():
@@ -78,14 +79,13 @@ async def get_user_history(user_id: str) -> List[Dict]:
             docs = response.json()
 
             results = []
-
             for doc in docs:
                 results.append(
                     {
                         "id": str(doc.get("id")),
                         "filename": doc.get("filename", "resume"),
                         "resume_name": doc.get("filename", "resume"),
-                        "job_title": "AI Engineer",
+                        "job_title": "Software Engineer",
                         "ats_score": doc.get("ats_score", 0),
                         "keyword_match": doc.get("keyword_match", 0),
                         "missing_keywords": doc.get("missing_keywords", []),
@@ -96,7 +96,7 @@ async def get_user_history(user_id: str) -> List[Dict]:
                 )
             return results
     except Exception as exc:
-        logger.error(f"Failed to fetch user history from Supabase: {exc}")
+        logger.error(f"Failed to fetch history from Supabase: {exc}")
         return []
 
 
@@ -117,5 +117,5 @@ async def delete_analysis(analysis_id: str, user_id: str) -> bool:
             response.raise_for_status()
             return True
     except Exception as exc:
-        logger.error(f"Failed to delete analysis from Supabase {analysis_id}: {exc}")
+        logger.error(f"Failed to delete analysis {analysis_id}: {exc}")
         return False

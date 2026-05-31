@@ -33,5 +33,6 @@ Thumbs.db
 *.log
 
 # ML models
+ml_models/
 *.safetensors
 *.pkl
