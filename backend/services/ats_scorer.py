@@ -453,6 +453,7 @@ def calculate_overall_score(
         "overall_score": round(overall_score, 1),
         "formatting_score": round(formatting_score, 1),
         "keyword_score": round(keyword_score, 1),
+        "keywords_score": round(keyword_score, 1),
         "content_score": round(content_score, 1),
         "skill_validation_score": round(skill_validation_score, 1),
         "ats_compatibility_score": round(ats_compatibility_score, 1),

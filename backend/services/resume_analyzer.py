@@ -8,6 +8,8 @@ from backend.services.feedback_engine import analyze_issues, generate_issues_sum
 from backend.services.ats_scorer import (
     calculate_overall_score,
     validate_skills_with_projects,
+    generate_critical_issue,
+    generate_improvements,
 )
 
 
@@ -124,7 +126,7 @@ def analyze_full_resume(
         "validated": [
             {
                 "skill": item["skill"],
-                projects: item.get("projects", []),
+                "projects": item.get("projects", []),
             }
             for item in validated_raw
         ],
@@ -133,6 +135,9 @@ def analyze_full_resume(
         "validated_count": len(validated_raw),
         "validation_pct": val_pct,
     }
+
+    critical_issues = generate_critical_issue(scores, location_results, grammar_results)
+    suggestions = generate_improvements(scores, skill_validation)
 
     return {
         "ATS_score": scores["overall_score"],
@@ -155,6 +160,8 @@ def analyze_full_resume(
         "strengths": _generate_strengths(
             parsed_resume, skills, projects, action_verbs, skill_validation, scores
         ),
+        "critical_issues": critical_issues,
+        "suggestions": suggestions,
         "interpretation": scores.get("overall_interpretation", ""),
         "skill_validation_details": skill_validation_details,
         "experience_months": experience_months,

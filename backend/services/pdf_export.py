@@ -4,8 +4,10 @@ try:
     from weasyprint import HTML
 
     WEASYPRINT_INSTALLED = True
-except ImportError:
+    WEASYPRINT_ERROR = ""
+except (ImportError, OSError) as e:
     WEASYPRINT_INSTALLED = False
+    WEASYPRINT_ERROR = str(e)
 
 logger = logging.getLogger("ats_resume_scorer")
 
@@ -13,7 +15,10 @@ logger = logging.getLogger("ats_resume_scorer")
 def generate_combined_pdf(html_docs: dict[str, str]) -> bytes:
     if not WEASYPRINT_INSTALLED:
         raise ImportError(
-            "WeasyPrint library is not installed. Please install it to use PDF export functionality."
+            f"WeasyPrint is not functional: {WEASYPRINT_ERROR}. "
+            "On Windows, WeasyPrint requires GTK+ to be installed on your system. "
+            "Please install the GTK3 runtime for Windows (providing libgobject-2.0-0) "
+            "and restart your terminal/IDE."
         )
 
     documents = []

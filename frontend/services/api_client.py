@@ -66,7 +66,7 @@ def delete_history_entry(analsis_id: str, access_token: str) -> None:
 
 def generate_pdf(analysis_data: Dict[str, Any], access_token: str) -> bytes:
     response = requests.post(
-        f"{_backend_url}/api/v1/generate-pdf",
+        f"{_backend_url()}/api/v1/generate-pdf",
         json=analysis_data,
         headers=_auth_headers(access_token),
         timeout=60,

@@ -6,9 +6,9 @@ from frontend.services import api_client
 
 def _show_backend_error(exc: Exception) -> None:
     if isinstance(exc, requests.ConnectionError):
-        st.error("Could not research the backend. Is it running on port 8000?")
+        st.error("Could not reach the backend. Is it running on port 8000?")
     elif isinstance(exc, requests.HTTPError) and exc.response is not None:
-        st.error(f"Backend returnd {exc.response.status_code}: {exc.response.text}")
+        st.error(f"Backend returned {exc.response.status_code}: {exc.response.text}")
     else:
         st.error(f"Unexpected error: {exc}")
 
@@ -30,7 +30,7 @@ def render() -> None:
 
     if not history:
         st.info(
-            "No analyses yet for thhis account. Run a scoring on the ATS Scorer page first."
+            "No analyses yet for this account. Run a scoring on the ATS Scorer page first."
         )
         if st.button("🎯 Go to ATS Scorer"):
             st.session_state.current_view = "scorer"
@@ -47,7 +47,7 @@ def render() -> None:
         analysis = entry.get("analysis_result", {}) or {}
 
         component_scores = analysis.get("component_scores", {}) or {}
-        jd_comparison = analysis.get("jd_compparison") or analysis.get(
+        jd_comparison = analysis.get("jd_comparison") or analysis.get(
             "jd_match_analysis"
         )
 

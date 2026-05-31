@@ -56,6 +56,9 @@ async def save_analysis(
                 logger.info(f"Saved analysis for user {user_id}: {inserted_id}")
                 return inserted_id
             return None
+    except httpx.HTTPStatusError as exc:
+        logger.error(f"Failed to save analysis to Supabase (HTTP error): {exc}. Response: {exc.response.text}")
+        return None
     except Exception as exc:
         logger.error(f"Failed to save analysis to Supabase: {exc}")
         return None
@@ -95,6 +98,9 @@ async def get_user_history(user_id: str) -> List[Dict]:
                     }
                 )
             return results
+    except httpx.HTTPStatusError as exc:
+        logger.error(f"Failed to fetch history from Supabase (HTTP error): {exc}. Response: {exc.response.text}")
+        return []
     except Exception as exc:
         logger.error(f"Failed to fetch history from Supabase: {exc}")
         return []
@@ -116,6 +122,9 @@ async def delete_analysis(analysis_id: str, user_id: str) -> bool:
             )
             response.raise_for_status()
             return True
+    except httpx.HTTPStatusError as exc:
+        logger.error(f"Failed to delete analysis {analysis_id} (HTTP error): {exc}. Response: {exc.response.text}")
+        return False
     except Exception as exc:
         logger.error(f"Failed to delete analysis {analysis_id}: {exc}")
         return False

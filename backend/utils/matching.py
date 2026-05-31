@@ -40,7 +40,7 @@ def fuzzy_match_keywords(
     resume_keywords: List[str], jd_keywords: List[str], threshold: int = 80
 ) -> Dict[str, List[str]]:
     resume_normalized = {normalize_skill(kw) for kw in resume_keywords}
-    jd_normalized = {normalize_skill(kw) for kw in jd_keywords}
+    jd_normalized = {normalize_skill(kw): kw for kw in jd_keywords}
 
     matched_jd_originals = []
     missing_jd_originals = []

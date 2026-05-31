@@ -1,5 +1,4 @@
 import io
-import magic
 from typing import Tuple, Optional
 
 import pdfplumber
@@ -47,19 +46,49 @@ def validate_file(file_data: bytes, filename: str) -> Tuple[bool, str, Optional[
     if file_size_bytes == 0:
         return (
             False,
-            "uploade file is empty...please check the file you have uploaded and try again",
+            "Uploaded file is empty. Please check the file you have uploaded and try again.",
+            None,
         )
 
-    try:
-        mime_type = magic.from_buffer(file_data, mime=True)
-    except Exception as e:
-        return False, f"error deteminin the file type : {e}", None
+    # Robust signature-based detection (magic bytes)
+    header = file_data[:8]
+    mime_type = None
 
-    if mime_type not in SUPPORTED_MIME_TYPES:
+    if header.startswith(b'%PDF'):
+        mime_type = "application/pdf"
+    elif header.startswith(b'PK\x03\x04'):
+        mime_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    elif header.startswith(b'\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1'):
+        mime_type = "application/msword"
+    else:
+        # Fallback 1: Guess by extension using Python's standard library
+        import mimetypes
+        guess, _ = mimetypes.guess_type(filename)
+        if guess:
+            mime_type = guess
+
+    # Fallback 2: Try python-magic as a last resort, wrapped defensively
+    if not mime_type:
+        try:
+            import magic
+            mime_type = magic.from_buffer(file_data, mime=True)
+        except Exception:
+            # Fallback 3: Explicit extension mapping if python-magic fails/crashes
+            import os
+            ext = os.path.splitext(filename)[1].lower()
+            if ext == '.pdf':
+                mime_type = "application/pdf"
+            elif ext == '.docx':
+                mime_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            elif ext == '.doc':
+                mime_type = "application/msword"
+
+    if not mime_type or mime_type not in SUPPORTED_MIME_TYPES:
         supported = ", ".join(SUPPORTED_MIME_TYPES.keys()).upper()
+        detected_str = f"type: {mime_type}" if mime_type else "unknown type"
         return (
             False,
-            (f"Unsupported file type: {mime_type}. Please upload one of: {supported}."),
+            f"Unsupported file {detected_str}. Please upload one of: {supported}.",
             None,
         )
 

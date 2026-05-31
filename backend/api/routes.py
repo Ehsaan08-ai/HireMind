@@ -103,7 +103,7 @@ async def analyze_resume(
     )
 
     response = AnalysisResponse(
-        ATS_score=result["ats_score"],
+        ATS_Score=result["ats_score"],
         component_scores=ComponentScores(**result["component_scores"]),
         issues_summary=result["issues_summary"],
         detailed_feedback=detailed_fb,
@@ -119,6 +119,9 @@ async def analyze_resume(
         skills=list(result.get("skills", [])[:20]),
         jd_comparison=jd_comparison_result,
         interpretation=result.get("interpretation", ""),
+        strengths=result.get("strengths", []),
+        critical_issues=result.get("critical_issues", []),
+        suggestions=result.get("suggestions", []),
     )
 
     try:
@@ -193,6 +196,9 @@ async def generate_pdf(
             media_type="application/pdf",
             headers={"Content-Disposition": "attachment; filename=ats_report.pdf"},
         )
+    except ImportError as e:
+        logger.error(f"Failed to generate PDF (dependency missing): {e}")
+        raise HTTPException(status_code=424, detail=str(e))
     except Exception as e:
         logger.error(f"Failed to generate PDF: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to generate PDF: {e}")
@@ -227,6 +233,9 @@ async def generate_history_pdf(
                 "Content-Disposition": f"attachment; filename=ats_report_{analysis_id}.pdf"
             },
         )
+    except ImportError as e:
+        logger.error(f"Failed to generate history PDF (dependency missing): {e}")
+        raise HTTPException(status_code=424, detail=str(e))
     except Exception as e:
         logger.error(f"Failed to generate PDF for history: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to generate PDF: {e}")
