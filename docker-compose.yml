@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: hiremind-backend
+    ports:
+      - "8000:8000"
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - PORT=8000
