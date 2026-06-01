@@ -33,8 +33,11 @@ source venv/bin/activate
 
 # 3. Install Python requirements
 echo "[3/6] Installing Python packages (this will take a couple of minutes)..."
+mkdir -p $(pwd)/.pip_tmp
+export TMPDIR=$(pwd)/.pip_tmp
 pip install --upgrade pip
 pip install --no-cache-dir -r requirements.txt
+rm -rf $(pwd)/.pip_tmp
 
 # 4. Download spaCy models
 echo "[4/6] Downloading spaCy NLP models..."
