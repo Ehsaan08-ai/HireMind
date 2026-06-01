@@ -9,7 +9,7 @@ Designed to empower both job seekers and recruiters, HireMind extracts critical 
 ## 🔗 Live Application & Landing Page
 
 * **Live Application (Frontend)**: [https://hiremind-ats-scorer.streamlit.app/](https://hiremind-ats-scorer.streamlit.app/)
-* **Project Landing Page**: *[Insert your landing page URL here]*
+* **Project Landing Page**: *Not Created Yet!*
 
 ---
 
