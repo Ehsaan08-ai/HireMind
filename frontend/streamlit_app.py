@@ -32,9 +32,13 @@ for key, default in [
 if not st.session_state.access_token and "code" in st.query_params:
     from frontend.services import supabase_client
 
-    result = supabase_client.exchange_code_for_session(st.query_params["code"])
+    code_verifier = st.query_params.get("code_verifier")
+    result = supabase_client.exchange_code_for_session(
+        st.query_params["code"],
+        code_verifier=code_verifier
+    )
 
-    # Always clear the ?code= param so a refresh doesn't try to re-exchange.
+    # Always clear the query parameters so a refresh doesn't try to re-exchange.
     st.query_params.clear()
     if "error" in result:
         st.session_state.auth_error = f"Google sign-in failed: {result['error']}"

@@ -97,32 +97,62 @@ def google_oauth_url() -> Dict[str, Any]:
     if err:
         return {"error": err}
     try:
-        resp = get_client().auth.sign_in_with_oauth(
+        client = get_client()
+        resp = client.auth.sign_in_with_oauth(
             {
                 "provider": "google",
                 "options": {"redirect_to": OAUTH_REDIRECT_URL},
             }
         )
+        
+        # Retrieve the generated code_verifier
+        storage_key = f"{client.auth._storage_key}-code-verifier"
+        code_verifier = client.auth._storage.get_item(storage_key) or ""
+        
+        # Append code_verifier to redirect_to so it survives the full redirect
+        if code_verifier and resp.url:
+            import urllib.parse
+            parsed = urllib.parse.urlparse(resp.url)
+            query_params = urllib.parse.parse_qs(parsed.query)
+            if "redirect_to" in query_params:
+                original_redirect = query_params["redirect_to"][0]
+                separator = "&" if "?" in original_redirect else "?"
+                new_redirect = f"{original_redirect}{separator}code_verifier={code_verifier}"
+                query_params["redirect_to"] = [new_redirect]
+            
+            # Rebuild the final authorization URL
+            new_query = urllib.parse.urlencode(query_params, doseq=True)
+            return {"url": urllib.parse.urlunparse(parsed._replace(query=new_query))}
+            
         return {"url": resp.url}
     except Exception as exc:
         logger.warning(f"oauth url generation failed: {exc}")
         return {"error": _humanize(exc)}
 
 
-def exchange_code_for_session(auth_code: str) -> Dict[str, Any]:
+def exchange_code_for_session(auth_code: str, code_verifier: str = None) -> Dict[str, Any]:
     """Called once after the OAuth provider redirects back with `?code=...`."""
     err = _missing_config()
     if err:
         return {"error": err}
     client = get_client()
     try:
-        storage_key = f"{client.auth._storage_key}-code-verifier"
-        code_verifier = client.auth._storage.get_item(storage_key) or ""
+        # Fallback to local storage if not explicitly provided
+        if not code_verifier:
+            storage_key = f"{client.auth._storage_key}-code-verifier"
+            code_verifier = client.auth._storage.get_item(storage_key) or ""
+            
+        # Reconstruct the exact same redirect_to URL passed during sign-in
+        redirect_to = OAUTH_REDIRECT_URL
+        if code_verifier:
+            separator = "&" if "?" in OAUTH_REDIRECT_URL else "?"
+            redirect_to = f"{OAUTH_REDIRECT_URL}{separator}code_verifier={code_verifier}"
+            
         resp = client.auth.exchange_code_for_session(
             {
                 "auth_code": auth_code,
                 "code_verifier": code_verifier,
-                "redirect_to": OAUTH_REDIRECT_URL,
+                "redirect_to": redirect_to,
             }
         )
         if not resp.session or not resp.user:

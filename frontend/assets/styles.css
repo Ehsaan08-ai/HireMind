@@ -1,38 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
 :root {
-    /* Primary Colors */
-    --primary-color: #4F46E5;
-    --primary-hover: #4338CA;
-    --primary-light: #818CF8;
-    --primary-dark: #3730A3;
+    /* Primary Colors - Modern Indigo & Violet */
+    --primary-color: #6366F1;
+    --primary-hover: #4F46E5;
+    --primary-light: #A5B4FC;
+    --primary-dark: #312E81;
     
-    /* Status Colors */
+    /* Vibrant Status Colors */
     --success-color: #10B981;
-    --success-light: #34D399;
-    --success-dark: #059669;
+    --success-light: #A7F3D0;
+    --success-dark: #065F46;
     --warning-color: #F59E0B;
-    --warning-light: #FBBF24;
-    --warning-dark: #D97706;
+    --warning-light: #FDE68A;
+    --warning-dark: #78350F;
     --danger-color: #EF4444;
-    --danger-light: #F87171;
-    --danger-dark: #DC2626;
-    --info-color: #3B82F6;
-    --info-light: #60A5FA;
-    --info-dark: #2563EB;
+    --danger-light: #FCA5A5;
+    --danger-dark: #7F1D1D;
+    --info-color: #06B6D4;
+    --info-light: #CFFAFE;
+    --info-dark: #164E63;
     
-    /* Neutral Colors */
-    --text-primary: #1F2937;
-    --text-secondary: #6B7280;
-    --text-muted: #9CA3AF;
-    --background-light: #F9FAFB;
+    /* Neutral Colors - Tech Slate */
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #64748B;
+    --background-light: #F8FAFC;
     --background-white: #FFFFFF;
-    --border-color: #E5E7EB;
-    --border-light: #F3F4F6;
+    --border-color: #E2E8F0;
+    --border-light: #F1F5F9;
     
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    /* Premium Glassmorphism & Shadows */
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-bg-hover: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
+    --shadow-sm: 0 2px 8px rgba(99, 102, 241, 0.04);
+    --shadow-md: 0 8px 16px -2px rgba(99, 102, 241, 0.08);
+    --shadow-lg: 0 16px 24px -4px rgba(99, 102, 241, 0.12);
+    --shadow-xl: 0 24px 36px -6px rgba(99, 102, 241, 0.16);
     
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -42,28 +48,28 @@
     --spacing-xl: 2rem;
     --spacing-2xl: 3rem;
 
-    /* Typography */
-    --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    /* Modern Typography */
+    --font-family-base: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-size-xs: 0.75rem;
     --font-size-sm: 0.875rem;
     --font-size-base: 1rem;
     --font-size-lg: 1.125rem;
     --font-size-xl: 1.25rem;
     --font-size-2xl: 1.5rem;
-    --font-size-3xl: 2rem;
+    --font-size-3xl: 2.25rem;
     
-    /* Border Radius */
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
+    /* Smooth Border Radius */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
     --radius-full: 9999px;
     
-    /* Transitions */
-    --transition-fast: 150ms ease;
-    --transition-base: 200ms ease;
-    --transition-slow: 300ms ease;
-    --transition-slower: 500ms ease;
+    /* Premium Transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slower: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ============================================
@@ -73,6 +79,7 @@
     font-family: var(--font-family-base);
     color: var(--text-primary);
     line-height: 1.6;
+    background-color: var(--background-light);
 }
 
 /* Consistent heading styles */
@@ -129,17 +136,20 @@ h1, h2, h3, h4, h5, h6 {
     CARD STYLES
    ============================================ */
 .metric-card {
-    background: var(--background-white);
+    background: var(--glass-bg);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
+    box-shadow: var(--glass-shadow);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     transition: all var(--transition-base);
 }
 
 .metric-card:hover {
+    background: var(--glass-bg-hover);
     box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
+    transform: translateY(-4px);
     border-color: var(--primary-light);
 }
 
@@ -148,20 +158,23 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
     box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
     transition: all var(--transition-base);
 }
 
 .card-elevated:hover {
     box-shadow: var(--shadow-xl);
-    transform: translateY(-4px);
+    transform: translateY(-6px);
+    border-color: var(--primary-light);
 }
 
 .card-gradient {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #c084fc 100%);
     color: white;
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
     box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ============================================
@@ -1719,4 +1732,30 @@ STREAMLIT-SPECIFIC OVERRIDES
     font-size: var(--font-size-sm);
     max-width: 300px;
     margin: 0 auto;
+}
+
+/* ============================================
+   SIDEBAR ACCOUNT TEXTBOX STYLING
+   ============================================ */
+/* Style sidebar text/password inputs to have a solid black border for better visibility */
+section[data-testid="stSidebar"] div[data-baseweb="input"] {
+    border: 1px solid #000000 !important;
+    border-radius: var(--radius-sm) !important;
+    background-color: var(--background-white) !important;
+}
+
+/* Prevent double borders on nested elements */
+section[data-testid="stSidebar"] div[data-baseweb="base-input"] {
+    border: none !important;
+}
+
+/* Focus state border styling */
+section[data-testid="stSidebar"] div[data-baseweb="input"]:focus-within {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 1px var(--primary-color) !important;
+}
+
+/* Ensure the inputs themselves inherit proper border and color constraints */
+section[data-testid="stSidebar"] input {
+    color: var(--text-primary) !important;
 }

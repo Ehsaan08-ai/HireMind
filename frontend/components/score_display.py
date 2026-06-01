@@ -27,16 +27,11 @@ def display_overall_score(analysis: Dict[str, Any]) -> None:
     _, mid, _ = st.columns([1, 2, 1])
     with mid:
         st.markdown(
-            f"""
-            <div style="text-align:center; padding:2rem; background-color:{bg_color};
-                        border-radius:15px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
-                <h1 style="color:{text_color}; font-size:4.5rem; margin:0; font-weight:bold;">
-                    {emoji} {score:.0f}
-                </h1>
-                <h3 style="color:{text_color}; margin:0.5rem 0;">Overall ATS Score</h3>
-                <p style="color:#666; margin-top:0.5rem;">{interpretation}</p>
-            </div>
-            """,
+            f"""<div class="metric-card" style="text-align:center; padding:2.5rem 1.5rem; background: var(--glass-bg); border-radius: var(--radius-lg); box-shadow: var(--glass-shadow); border: 2px solid {text_color}22; position: relative;">
+<div style="font-size: 5rem; line-height: 1; font-weight: 800; color: {text_color}; margin-bottom: 0.5rem; text-shadow: 0 4px 20px {text_color}33;">{score:.0f}<span style="font-size: 2rem; font-weight: 500; opacity: 0.7;">/100</span></div>
+<div style="display: inline-flex; align-items: center; gap: 0.5rem; background: {bg_color}; color: {text_color}; padding: 0.4rem 1rem; border-radius: var(--radius-full); font-weight: 600; font-size: 0.95rem; margin-bottom: 1rem; border: 1px solid {text_color}15;"><span>{emoji}</span> Overall ATS Score</div>
+<p style="color: var(--text-secondary); margin: 0.5rem 0 0; font-size: 1.05rem; line-height: 1.5; font-weight: 500;">{interpretation}</p>
+</div>""",
             unsafe_allow_html=True,
         )
 
@@ -50,20 +45,24 @@ def display_score_breakdown(analysis: Dict[str, Any]) -> None:
     for i, (label, key, max_score, icon) in enumerate(COMPONENTS):
         value = float(component_scores.get(key, 0))
         percentage = value / max_score if max_score else 0
-        bar_color = (
-            "green" if percentage >= 0.8 else "orange" if percentage >= 0.6 else "red"
+        
+        # Match class names from styles.css
+        bar_class = (
+            "progress-bar-success" if percentage >= 0.8 
+            else "progress-bar-warning" if percentage >= 0.6 
+            else "progress-bar-danger"
         )
 
         with left if i % 2 == 0 else right:
-            st.markdown(f"**{icon} {label}**")
             st.markdown(
-                f"""
-                <div style="background-color:#e0e0e0; border-radius:10px; height:20px; margin-bottom:5px;">
-                    <div style="background-color:{bar_color}; width:{percentage * 100}%;
-                                height:100%; border-radius:10px; transition:width 0.5s;"></div>
-                </div>
-                """,
+                f"""<div class="metric-card" style="padding: 1.25rem; margin-bottom: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--background-white);">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+<span style="font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">{icon} {label}</span>
+<span style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">{value:.0f} <span style="font-weight: 500; color: var(--text-muted); font-size: 0.8rem;">/ {max_score}</span></span>
+</div>
+<div class="progress-container" style="height: 8px; background: var(--border-light);">
+<div class="progress-bar {bar_class}" style="width: {percentage * 100}%;"></div>
+</div>
+</div>""",
                 unsafe_allow_html=True,
             )
-            st.markdown(f"**{value:.0f}/{max_score}**")
-            st.markdown("")
