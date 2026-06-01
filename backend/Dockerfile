@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libharfbuzz0b \
     libpangoft2-1.0-0 \
     libffi-dev \
-    libshared-mime-info \
     shared-mime-info \
     git \
     && rm -rf /var/lib/apt/lists/*
