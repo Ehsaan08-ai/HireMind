@@ -8,7 +8,7 @@ Designed to empower both job seekers and recruiters, HireMind extracts critical 
 
 ## 🔗 Live Application & Landing Page
 
-* **Live Application (Frontend)**: [https://hire-mind-landing-page-vercel.vercel.app/](https://hire-mind-landing-page-vercel.vercel.app/)
+* **Live Application**: [https://hire-mind-landing-page-vercel.vercel.app/](https://hire-mind-landing-page-vercel.vercel.app/)
 
 ---
 
