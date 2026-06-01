@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 # Configure page
 st.set_page_config(
     page_title="ATS Resume Scorer",
-    page_icon="🎯",
+    page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded",
 )

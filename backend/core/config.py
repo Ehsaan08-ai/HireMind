@@ -15,9 +15,7 @@ APP_VERSION = "1.0.0"
 APP_DESCRIPTION = "Analyze Resumes against job descriptions using NLP + ML."
 
 ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:5175",
+    'https://hiremind-ats-scorer.streamlit.app/'
 ]
 
 # file upload settings

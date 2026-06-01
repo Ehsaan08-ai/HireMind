@@ -7,7 +7,7 @@ def render():
         """<div class="card-gradient" style="padding: 3.5rem 2rem; text-align: center; border-radius: var(--radius-xl); margin-bottom: 2.5rem; position: relative; overflow: hidden;">
 <div style="position: absolute; top: -50px; left: -50px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,0.12); filter: blur(25px);"></div>
 <div style="position: absolute; bottom: -60px; right: -60px; width: 220px; height: 220px; border-radius: 50%; background: rgba(255,255,255,0.08); filter: blur(35px);"></div>
-<h1 style="color: white !important; font-size: 3.2rem; font-weight: 800; margin-bottom: 0.75rem; letter-spacing: -0.03em; text-shadow: 0 4px 12px rgba(0,0,0,0.15);">🎯 HireMind: ATS Resume Scorer</h1>
+<h1 style="color: white !important; font-size: 3.2rem; font-weight: 800; margin-bottom: 0.75rem; letter-spacing: -0.03em; text-shadow: 0 4px 12px rgba(0,0,0,0.15);">🧠 HireMind: ATS Resume Scorer</h1>
 <h3 style="color: rgba(255, 255, 255, 0.95) !important; font-size: 1.45rem; font-weight: 400; margin-bottom: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">Optimize Your Resume for Applicant Tracking Systems</h3>
 <p style="color: rgba(255, 255, 255, 0.85) !important; font-size: 1.1rem; max-width: 750px; margin: 0 auto 2.5rem; line-height: 1.6; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Get instant feedback on your resume's ATS compatibility and verify your real skill coverage with state-of-the-art semantic AI models.</p>
 </div>""",
