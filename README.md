@@ -13,6 +13,37 @@ Designed to empower both job seekers and recruiters, HireMind extracts critical 
 
 ---
 
+## 🛠️ Technology Stack
+
+### Frontend (User Interface)
+* **Streamlit**: Used to build a rich, responsive, and interactive analytical dashboard interface.
+* **Streamlit Community Cloud**: For highly-available frontend web hosting.
+
+### Backend (Core Logic & API)
+* **FastAPI**: A high-performance, asynchronous web framework for building standard RESTful APIs.
+* **Uvicorn**: An ASGI web server implementation for high-throughput production request handling.
+
+### Natural Language Processing (NLP) & Machine Learning
+* **PyTorch**: Deep learning framework powering transformer architectures.
+* **Hugging Face Sentence-Transformers** (`all-MiniLM-L6-v2`): Used to generate high-dimensional semantic embeddings for context-aware resume-to-job matching.
+* **spaCy** (`en_core_web_md` & `en_core_web_sm`): Employed for tokenization, grammatical part-of-speech tag parsing, and high-precision Named Entity Recognition (NER).
+* **RapidFuzz**: High-performance fuzzy string matching for token and skill normalization.
+
+### Large Language Models (LLMs) & Services
+* **Groq API**: Interfaces with cutting-edge LLMs (via Groq's high-speed inference engine) to provide detailed qualitative reviews and tailored feedback.
+* **Supabase**: Handles PostgreSQL database storage, user authentication, and resume history logs.
+
+### File Extraction & Document Generation
+* **File Parsers** (`pdfplumber`, `PyPDF2`, `python-docx`): Heavy-duty engines for extracting structured content from multi-format user uploads.
+* **WeasyPrint & Jinja2**: Generates highly styled, publication-grade analytical PDF feedback reports dynamically from HTML templates.
+
+### Infrastructure & DevOps
+* **AWS EC2** (`t3.micro` on Ubuntu): High-availability virtual server hosting.
+* **Linux Systemd Service**: Manages process orchestration, automatic start on boot, and background daemon persistence.
+* **Docker & Docker Compose**: Complete environment packaging for portable infrastructure.
+
+---
+
 ## 🚀 The Architecture Journey: Why I Migrated from Render to AWS
 
 Initially, the project was planned for deployment on Render's standard server tier. However, modern AI-driven architectures carry substantial memory footprints. During deployment, the application consistently crashed due to Out-Of-Memory (OOM) errors.
