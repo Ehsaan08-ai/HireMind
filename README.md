@@ -13,7 +13,7 @@ Designed to empower both job seekers and recruiters, HireMind extracts critical 
 
 ---
 
-## 🚀 The Architecture Journey: Why We Migrated from Render to AWS
+## 🚀 The Architecture Journey: Why I Migrated from Render to AWS
 
 Initially, the project was planned for deployment on Render's standard server tier. However, modern AI-driven architectures carry substantial memory footprints. During deployment, the application consistently crashed due to Out-Of-Memory (OOM) errors.
 
@@ -26,9 +26,9 @@ Your HireMind backend relies on highly advanced, specialized machine learning li
 Altogether, the active runtime requires **800MB – 1.2GB of RAM** to parse, load, and execute. Because traditional platforms like Render limit free tiers to **512MB RAM**, hosting there was technically impossible.
 
 ### The Scalable Solution: AWS EC2 + Native Systemd / Docker
-To provide a production-ready environment on a budget, we transitioned the deployment architecture to **AWS EC2** using a `t3.micro` instance (eligible for the **AWS Free Tier**). 
+To provide a production-ready environment on a budget, I transitioned the deployment architecture to **AWS EC2** using a `t3.micro` instance (eligible for the **AWS Free Tier**). 
 
-By implementing **Virtual SSD Swap Space (2GB)**, we successfully gave our server a massive memory overhead buffer. This allows the lightweight, high-performance host to handle heavy ML weight loading and heavy parsing operations flawlessly—combining enterprise reliability with $0 deployment costs.
+By implementing **Virtual SSD Swap Space (2GB)**, I successfully gave my server a massive memory overhead buffer. This allows the lightweight, high-performance host to handle heavy ML weight loading and heavy parsing operations flawlessly—combining enterprise reliability with $0 deployment costs.
 
 ---
 
