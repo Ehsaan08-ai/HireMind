@@ -2,8 +2,9 @@ import streamlit as st
 import sys
 import datetime
 import json
+import time
+import uuid
 from pathlib import Path
-import extra_streamlit_components as stx
 
 # Put the repo root on sys.path so `from frontend.views import ...` resolves
 # regardless of the directory streamlit was launched from.
@@ -16,8 +17,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
-cookie_manager = stx.CookieManager()
 
 # Auth state. Populated by Supabase sign-in / sign-up / OAuth.
 # All four are None when signed out, all four are set when signed in.
@@ -32,18 +31,67 @@ for key, default in [
     if key not in st.session_state:
         st.session_state[key] = default
 
-# Retrieve saved session from cookies if not in session state
-if not st.session_state.access_token:
-    sb_session_raw = cookie_manager.get(cookie="sb_session")
-    if sb_session_raw:
+# File-based Session Store for native server-side session persistence
+class FileSessionStore:
+    SESSIONS_DIR = Path(__file__).parent / ".sessions"
+
+    @classmethod
+    def _get_path(cls, session_id: str) -> Path:
+        cls.SESSIONS_DIR.mkdir(exist_ok=True)
+        safe_id = "".join(c for c in session_id if c.isalnum() or c in "-_")
+        return cls.SESSIONS_DIR / f"sess_{safe_id}.json"
+
+    @classmethod
+    def save(cls, session_id: str, data: dict):
         try:
-            sb_session = json.loads(sb_session_raw)
-            st.session_state.access_token = sb_session.get("access_token")
-            st.session_state.refresh_token = sb_session.get("refresh_token")
-            st.session_state.user_id = sb_session.get("user_id")
-            st.session_state.user_email = sb_session.get("user_email")
+            path = cls._get_path(session_id)
+            with open(path, "w") as f:
+                json.dump({"data": data, "time": time.time()}, f)
+            cls._cleanup()
         except Exception:
             pass
+
+    @classmethod
+    def load(cls, session_id: str) -> dict | None:
+        try:
+            path = cls._get_path(session_id)
+            if path.exists():
+                with open(path, "r") as f:
+                    return json.load(f).get("data")
+        except Exception:
+            pass
+        return None
+
+    @classmethod
+    def delete(cls, session_id: str):
+        try:
+            path = cls._get_path(session_id)
+            if path.exists():
+                path.unlink()
+        except Exception:
+            pass
+
+    @classmethod
+    def _cleanup(cls):
+        try:
+            if not cls.SESSIONS_DIR.exists():
+                return
+            now = time.time()
+            for p in cls.SESSIONS_DIR.glob("sess_*.json"):
+                if now - p.stat().st_mtime > 7 * 24 * 3600:
+                    p.unlink()
+        except Exception:
+            pass
+
+# Retrieve saved session from server session store if session_id query param is present
+session_id = st.query_params.get("session_id")
+if session_id and not st.session_state.access_token:
+    sess = FileSessionStore.load(session_id)
+    if sess:
+        st.session_state.access_token = sess.get("access_token")
+        st.session_state.refresh_token = sess.get("refresh_token")
+        st.session_state.user_id = sess.get("user_id")
+        st.session_state.user_email = sess.get("user_email")
 
 # If we just came back from Google OAuth, Supabase appends `?code=<authcode>`
 # to the redirect URL. Exchange it for a session before rendering anything.
@@ -66,15 +114,16 @@ if not st.session_state.access_token and "code" in st.query_params:
         st.session_state.user_id = result["user_id"]
         st.session_state.user_email = result["email"]
         
-        # Save to cookies
-        expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
-        session_data = {
+        # Save to server-side session store
+        new_sess_id = str(uuid.uuid4())
+        FileSessionStore.save(new_sess_id, {
             "access_token": result["access_token"],
             "refresh_token": result["refresh_token"],
             "user_id": result["user_id"],
-            "user_email": result["email"],
-        }
-        cookie_manager.set("sb_session", json.dumps(session_data), expires_at=expires_at)
+            "user_email": result["email"]
+        })
+        st.query_params["session_id"] = new_sess_id
+        st.rerun()
 
 
 # Load custom CSS
@@ -126,8 +175,12 @@ with st.sidebar:
             for k in ("access_token", "refresh_token", "user_id", "user_email"):
                 st.session_state[k] = None
             
-            # Delete cookie
-            cookie_manager.delete("sb_session", key="delete_session")
+            # Delete from session store
+            current_sess_id = st.query_params.get("session_id")
+            if current_sess_id:
+                FileSessionStore.delete(current_sess_id)
+                st.query_params.pop("session_id", None)
+            st.rerun()
     else:
         # Signed-out state: tabs for sign-in vs sign-up + Google OAuth button.
         if st.session_state.auth_error:
@@ -154,15 +207,16 @@ with st.sidebar:
                     st.session_state.user_id = result["user_id"]
                     st.session_state.user_email = result["email"]
                     
-                    # Save to cookies
-                    expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
-                    session_data = {
+                    # Save to server-side session store
+                    new_sess_id = str(uuid.uuid4())
+                    FileSessionStore.save(new_sess_id, {
                         "access_token": result["access_token"],
                         "refresh_token": result["refresh_token"],
                         "user_id": result["user_id"],
-                        "user_email": result["email"],
-                    }
-                    cookie_manager.set("sb_session", json.dumps(session_data), expires_at=expires_at)
+                        "user_email": result["email"]
+                    })
+                    st.query_params["session_id"] = new_sess_id
+                st.rerun()
 
         with tab_up:
             with st.form("signup_form", clear_on_submit=False):
@@ -185,15 +239,16 @@ with st.sidebar:
                     st.session_state.user_id = result["user_id"]
                     st.session_state.user_email = result["email"]
                     
-                    # Save to cookies
-                    expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
-                    session_data = {
+                    # Save to server-side session store
+                    new_sess_id = str(uuid.uuid4())
+                    FileSessionStore.save(new_sess_id, {
                         "access_token": result["access_token"],
                         "refresh_token": result["refresh_token"],
                         "user_id": result["user_id"],
-                        "user_email": result["email"],
-                    }
-                    cookie_manager.set("sb_session", json.dumps(session_data), expires_at=expires_at)
+                        "user_email": result["email"]
+                    })
+                    st.query_params["session_id"] = new_sess_id
+                st.rerun()
 
         st.markdown(
             "<div style='text-align:center; margin: 8px 0; color:#94a3b8;'>or</div>",
