@@ -72,7 +72,6 @@ if not st.session_state.access_token and "code" in st.query_params:
             },
             expires_at=expires_at,
         )
-        st.rerun()
 
 
 # Load custom CSS
@@ -129,7 +128,6 @@ with st.sidebar:
             cookie_manager.delete("refresh_token", key="delete_refresh")
             cookie_manager.delete("user_id", key="delete_uid")
             cookie_manager.delete("user_email", key="delete_email")
-            st.rerun()
     else:
         # Signed-out state: tabs for sign-in vs sign-up + Google OAuth button.
         if st.session_state.auth_error:
@@ -167,7 +165,6 @@ with st.sidebar:
                         },
                         expires_at=expires_at,
                     )
-                st.rerun()
 
         with tab_up:
             with st.form("signup_form", clear_on_submit=False):
@@ -201,7 +198,6 @@ with st.sidebar:
                         },
                         expires_at=expires_at,
                     )
-                st.rerun()
 
         st.markdown(
             "<div style='text-align:center; margin: 8px 0; color:#94a3b8;'>or</div>",
