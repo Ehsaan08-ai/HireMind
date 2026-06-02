@@ -1,6 +1,7 @@
 import streamlit as st
 import sys
 import datetime
+import json
 from pathlib import Path
 import extra_streamlit_components as stx
 
@@ -33,12 +34,16 @@ for key, default in [
 
 # Retrieve saved session from cookies if not in session state
 if not st.session_state.access_token:
-    saved_token = cookie_manager.get(cookie="access_token")
-    if saved_token:
-        st.session_state.access_token = saved_token
-        st.session_state.refresh_token = cookie_manager.get(cookie="refresh_token")
-        st.session_state.user_id = cookie_manager.get(cookie="user_id")
-        st.session_state.user_email = cookie_manager.get(cookie="user_email")
+    sb_session_raw = cookie_manager.get(cookie="sb_session")
+    if sb_session_raw:
+        try:
+            sb_session = json.loads(sb_session_raw)
+            st.session_state.access_token = sb_session.get("access_token")
+            st.session_state.refresh_token = sb_session.get("refresh_token")
+            st.session_state.user_id = sb_session.get("user_id")
+            st.session_state.user_email = sb_session.get("user_email")
+        except Exception:
+            pass
 
 # If we just came back from Google OAuth, Supabase appends `?code=<authcode>`
 # to the redirect URL. Exchange it for a session before rendering anything.
@@ -63,15 +68,13 @@ if not st.session_state.access_token and "code" in st.query_params:
         
         # Save to cookies
         expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
-        cookie_manager.batch_set(
-            {
-                "access_token": result["access_token"],
-                "refresh_token": result["refresh_token"],
-                "user_id": result["user_id"],
-                "user_email": result["email"],
-            },
-            expires_at=expires_at,
-        )
+        session_data = {
+            "access_token": result["access_token"],
+            "refresh_token": result["refresh_token"],
+            "user_id": result["user_id"],
+            "user_email": result["email"],
+        }
+        cookie_manager.set("sb_session", json.dumps(session_data), expires_at=expires_at)
 
 
 # Load custom CSS
@@ -123,11 +126,8 @@ with st.sidebar:
             for k in ("access_token", "refresh_token", "user_id", "user_email"):
                 st.session_state[k] = None
             
-            # Delete cookies
-            cookie_manager.delete("access_token", key="delete_access")
-            cookie_manager.delete("refresh_token", key="delete_refresh")
-            cookie_manager.delete("user_id", key="delete_uid")
-            cookie_manager.delete("user_email", key="delete_email")
+            # Delete cookie
+            cookie_manager.delete("sb_session", key="delete_session")
     else:
         # Signed-out state: tabs for sign-in vs sign-up + Google OAuth button.
         if st.session_state.auth_error:
@@ -156,15 +156,13 @@ with st.sidebar:
                     
                     # Save to cookies
                     expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
-                    cookie_manager.batch_set(
-                        {
-                            "access_token": result["access_token"],
-                            "refresh_token": result["refresh_token"],
-                            "user_id": result["user_id"],
-                            "user_email": result["email"],
-                        },
-                        expires_at=expires_at,
-                    )
+                    session_data = {
+                        "access_token": result["access_token"],
+                        "refresh_token": result["refresh_token"],
+                        "user_id": result["user_id"],
+                        "user_email": result["email"],
+                    }
+                    cookie_manager.set("sb_session", json.dumps(session_data), expires_at=expires_at)
 
         with tab_up:
             with st.form("signup_form", clear_on_submit=False):
@@ -189,15 +187,13 @@ with st.sidebar:
                     
                     # Save to cookies
                     expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
-                    cookie_manager.batch_set(
-                        {
-                            "access_token": result["access_token"],
-                            "refresh_token": result["refresh_token"],
-                            "user_id": result["user_id"],
-                            "user_email": result["email"],
-                        },
-                        expires_at=expires_at,
-                    )
+                    session_data = {
+                        "access_token": result["access_token"],
+                        "refresh_token": result["refresh_token"],
+                        "user_id": result["user_id"],
+                        "user_email": result["email"],
+                    }
+                    cookie_manager.set("sb_session", json.dumps(session_data), expires_at=expires_at)
 
         st.markdown(
             "<div style='text-align:center; margin: 8px 0; color:#94a3b8;'>or</div>",
