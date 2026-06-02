@@ -1,6 +1,8 @@
 import streamlit as st
 import sys
+import datetime
 from pathlib import Path
+import extra_streamlit_components as stx
 
 # Put the repo root on sys.path so `from frontend.views import ...` resolves
 # regardless of the directory streamlit was launched from.
@@ -14,6 +16,12 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+@st.cache_resource
+def get_cookie_manager():
+    return stx.CookieManager()
+
+cookie_manager = get_cookie_manager()
+
 # Auth state. Populated by Supabase sign-in / sign-up / OAuth.
 # All four are None when signed out, all four are set when signed in.
 for key, default in [
@@ -26,6 +34,15 @@ for key, default in [
 ]:
     if key not in st.session_state:
         st.session_state[key] = default
+
+# Retrieve saved session from cookies if not in session state
+if not st.session_state.access_token:
+    saved_token = cookie_manager.get(cookie="access_token")
+    if saved_token:
+        st.session_state.access_token = saved_token
+        st.session_state.refresh_token = cookie_manager.get(cookie="refresh_token")
+        st.session_state.user_id = cookie_manager.get(cookie="user_id")
+        st.session_state.user_email = cookie_manager.get(cookie="user_email")
 
 # If we just came back from Google OAuth, Supabase appends `?code=<authcode>`
 # to the redirect URL. Exchange it for a session before rendering anything.
@@ -47,6 +64,13 @@ if not st.session_state.access_token and "code" in st.query_params:
         st.session_state.refresh_token = result["refresh_token"]
         st.session_state.user_id = result["user_id"]
         st.session_state.user_email = result["email"]
+        
+        # Save to cookies
+        expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
+        cookie_manager.set("access_token", result["access_token"], expires_at=expires_at)
+        cookie_manager.set("refresh_token", result["refresh_token"], expires_at=expires_at)
+        cookie_manager.set("user_id", result["user_id"], expires_at=expires_at)
+        cookie_manager.set("user_email", result["email"], expires_at=expires_at)
         st.rerun()
 
 
@@ -98,6 +122,12 @@ with st.sidebar:
             supabase_client.sign_out()
             for k in ("access_token", "refresh_token", "user_id", "user_email"):
                 st.session_state[k] = None
+            
+            # Delete cookies
+            cookie_manager.delete("access_token")
+            cookie_manager.delete("refresh_token")
+            cookie_manager.delete("user_id")
+            cookie_manager.delete("user_email")
             st.rerun()
     else:
         # Signed-out state: tabs for sign-in vs sign-up + Google OAuth button.
@@ -124,6 +154,13 @@ with st.sidebar:
                     st.session_state.refresh_token = result["refresh_token"]
                     st.session_state.user_id = result["user_id"]
                     st.session_state.user_email = result["email"]
+                    
+                    # Save to cookies
+                    expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
+                    cookie_manager.set("access_token", result["access_token"], expires_at=expires_at)
+                    cookie_manager.set("refresh_token", result["refresh_token"], expires_at=expires_at)
+                    cookie_manager.set("user_id", result["user_id"], expires_at=expires_at)
+                    cookie_manager.set("user_email", result["email"], expires_at=expires_at)
                 st.rerun()
 
         with tab_up:
@@ -146,6 +183,13 @@ with st.sidebar:
                     st.session_state.refresh_token = result["refresh_token"]
                     st.session_state.user_id = result["user_id"]
                     st.session_state.user_email = result["email"]
+                    
+                    # Save to cookies
+                    expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
+                    cookie_manager.set("access_token", result["access_token"], expires_at=expires_at)
+                    cookie_manager.set("refresh_token", result["refresh_token"], expires_at=expires_at)
+                    cookie_manager.set("user_id", result["user_id"], expires_at=expires_at)
+                    cookie_manager.set("user_email", result["email"], expires_at=expires_at)
                 st.rerun()
 
         st.markdown(
