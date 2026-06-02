@@ -139,6 +139,7 @@ def _render_export_buttons(analysis: dict) -> None:
         if "scorer_pdf_bytes" in st.session_state:
             st.download_button(
                 "⬇️ Download PDF",
+                data=st.session_state["scorer_pdf_bytes"],
                 file_name="ats_resume_report.pdf",
                 mime="application/pdf",
                 use_container_width=True,
