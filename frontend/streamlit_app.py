@@ -63,10 +63,15 @@ if not st.session_state.access_token and "code" in st.query_params:
         
         # Save to cookies
         expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
-        cookie_manager.set("access_token", result["access_token"], expires_at=expires_at)
-        cookie_manager.set("refresh_token", result["refresh_token"], expires_at=expires_at)
-        cookie_manager.set("user_id", result["user_id"], expires_at=expires_at)
-        cookie_manager.set("user_email", result["email"], expires_at=expires_at)
+        cookie_manager.batch_set(
+            {
+                "access_token": result["access_token"],
+                "refresh_token": result["refresh_token"],
+                "user_id": result["user_id"],
+                "user_email": result["email"],
+            },
+            expires_at=expires_at,
+        )
         st.rerun()
 
 
@@ -120,10 +125,10 @@ with st.sidebar:
                 st.session_state[k] = None
             
             # Delete cookies
-            cookie_manager.delete("access_token")
-            cookie_manager.delete("refresh_token")
-            cookie_manager.delete("user_id")
-            cookie_manager.delete("user_email")
+            cookie_manager.delete("access_token", key="delete_access")
+            cookie_manager.delete("refresh_token", key="delete_refresh")
+            cookie_manager.delete("user_id", key="delete_uid")
+            cookie_manager.delete("user_email", key="delete_email")
             st.rerun()
     else:
         # Signed-out state: tabs for sign-in vs sign-up + Google OAuth button.
@@ -153,10 +158,15 @@ with st.sidebar:
                     
                     # Save to cookies
                     expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
-                    cookie_manager.set("access_token", result["access_token"], expires_at=expires_at)
-                    cookie_manager.set("refresh_token", result["refresh_token"], expires_at=expires_at)
-                    cookie_manager.set("user_id", result["user_id"], expires_at=expires_at)
-                    cookie_manager.set("user_email", result["email"], expires_at=expires_at)
+                    cookie_manager.batch_set(
+                        {
+                            "access_token": result["access_token"],
+                            "refresh_token": result["refresh_token"],
+                            "user_id": result["user_id"],
+                            "user_email": result["email"],
+                        },
+                        expires_at=expires_at,
+                    )
                 st.rerun()
 
         with tab_up:
@@ -182,10 +192,15 @@ with st.sidebar:
                     
                     # Save to cookies
                     expires_at = datetime.datetime.now() + datetime.timedelta(days=7)
-                    cookie_manager.set("access_token", result["access_token"], expires_at=expires_at)
-                    cookie_manager.set("refresh_token", result["refresh_token"], expires_at=expires_at)
-                    cookie_manager.set("user_id", result["user_id"], expires_at=expires_at)
-                    cookie_manager.set("user_email", result["email"], expires_at=expires_at)
+                    cookie_manager.batch_set(
+                        {
+                            "access_token": result["access_token"],
+                            "refresh_token": result["refresh_token"],
+                            "user_id": result["user_id"],
+                            "user_email": result["email"],
+                        },
+                        expires_at=expires_at,
+                    )
                 st.rerun()
 
         st.markdown(
