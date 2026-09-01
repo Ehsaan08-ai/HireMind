@@ -8,7 +8,7 @@ from groq import Groq
 load_dotenv()
 logger = logging.getLogger("ats_resume_scorer")
 
-GROQ_MODEL = "qwen/qwen3.6-27b"
+GROQ_MODEL = "qwen/qwen3.8-27b"
 
 _client = None
 
